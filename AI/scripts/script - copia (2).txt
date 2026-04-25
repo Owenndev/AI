@@ -1,0 +1,64 @@
+cd /home/claude/MAIA && python test_fase1.py 2>&1
+
+
+==================================================
+  MAIA Fase 1 — Test de componentes
+==================================================
+
+📋 Config...
+  ✅ Config cargada
+  ✅ MAIA_ROOT: /home/claude
+  ✅ LLM_BASE_URL: http://127.0.0.1:8000/v1
+
+🧠 Memoria SQLite...
+  ✅ save_message + get_history
+  ✅ FTS5 search mensajes
+  ✅ create_task + update_task + get_task
+  ✅ save_episode + search_episodes
+  ✅ save_lesson + search_lessons
+  ✅ Stats: {'messages': 3, 'tasks': 1, 'episodes': 1, 'lessons': 1, 'skills': 0, 'tool_calls': 0}
+
+🔧 Tool Registry...
+  ✅ Registry: ['list_files', 'read_file', 'write_file', 'delete_file', 'shell', 'memory_search']
+  ✅ Approval flags correctos
+
+🛠️ Tools individuales...
+  ✅ list_files: 7 items en '.'
+  ✅ write_file
+  ✅ read_file
+  ✅ delete_file
+
+🔐 Approval Manager...
+  ✅ request approval creado
+  ✅ resolve approved
+  ✅ resolve rejected
+
+📝 Context Builder...
+  ❌ Context Builder: name 'Optional' is not defined
+
+🤖 LLM (llama-server)...
+  ⚠️  LLM no disponible (normal si no arrancaste start_llm.bat)
+
+🎨 ComfyUI...
+  ⚠️  ComfyUI no disponible (normal si no arrancaste start_comfyui.bat)
+
+==================================================
+Traceback (most recent call last):
+  File "/home/claude/MAIA/test_fase1.py", line 258, in <module>
+    asyncio.run(test_all())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/claude/MAIA/test_fase1.py", line 241, in test_all
+    passed = sum(1 for _, ok in results if ok)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/claude/MAIA/test_fase1.py", line 241, in <genexpr>
+    passed = sum(1 for _, ok in results if ok)
+                       ^^^^^
+ValueError: too many values to unpack (expected 2)

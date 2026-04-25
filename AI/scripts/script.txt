@@ -1,0 +1,6 @@
+mkdir -p /home/claude/MAIA/app/core/skills && \
+touch /home/claude/MAIA/app/core/__init__.py \
+      /home/claude/MAIA/app/core/memory/__init__.py \
+      /home/claude/MAIA/app/core/skills/__init__.py \
+      /home/claude/MAIA/app/tools/__init__.py \
+      /home/claude/MAIA/app/routes/__init__.py

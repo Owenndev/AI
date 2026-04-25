@@ -1,0 +1,58 @@
+cd /home/claude/MAIA && pip install websockets fastapi[standard] --break-system-packages -q && python test_fase2.py 2>&1
+
+==================================================
+  MAIA Fase 2 — ComfyUI Bridge
+==================================================
+
+🎛️  VRAM Orchestrator...
+  ✅ Pipelines definidos: 9
+  ✅ Pipeline 'text_to_image': 14.0GB — ✓ cabe
+  ✅ Pipeline 'image_edit': 14.0GB — ✓ cabe
+  ✅ Pipeline 'outfit_transfer': 14.0GB — ✓ cabe
+  ✅ Pipeline 'text_to_video': 16.0GB — ✓ cabe
+  ✅ Pipeline 'image_to_video': 16.0GB — ✓ cabe
+  ✅ Pipeline 'tts_only': 4.0GB — ✓ cabe
+  ✅ Pipeline 'lip_sync_only': 12.0GB — ✓ cabe
+  ✅ Pipeline 'talking_head': 14.0GB — ✓ cabe
+  ✅ Pipeline 'full_video': 16.0GB — ✓ cabe
+  ✅ Estado inicial: 0.0GB / 20GB
+  ✅ Validación de pipeline text_to_image
+
+🏗️  Workflow Builder...
+  ✅ Templates base cargados
+  ✅ Portrait: 832x1216, 25 steps
+Traceback (most recent call last):
+  File "/home/claude/MAIA/test_fase2.py", line 83, in test_all
+    assert story["height"] / story["width"] == pytest_ratio(9, 16)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+  ❌ Workflow Builder: 
+
+🔍 Inventory Scanner...
+  ✅ Estructura de inventario vacío
+  ✅ Detección de cache expirado
+/home/claude/MAIA/test_fase2.py:149: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  test_inv["scanned_at"] = datetime.utcnow().isoformat()
+  ✅ Detección de cache válido
+
+🔌 ComfyUI Client...
+  ✅ ComfyUI offline — client funciona correctamente (retorna False)
+  ✅ Manejo de error offline: 'ComfyUI no está disponible en http://127.0.0.1:818...'
+
+🛠️  ComfyUI Tools...
+  ✅ Schema generate_image correcto
+  ✅ generate_image no requiere aprobación
+  ✅ comfyui_status ejecutada: ⚠️ ComfyUI no está corriendo.
+Arrancalo con: `start_comfyui....
+
+🌐 Rutas FastAPI...
+  ✅ Rutas registradas: ['/api/comfyui/status', '/api/comfyui/inventory', '/api/comfyui/generate', '/api/comfyui/queue', '/api/comfyui/interrupt', '/api/comfyui/pipelines', '/api/comfyui/inventory/refresh']
+
+⚙️  main.py...
+  ✅ main.py importa sin errores
+  ✅ ComfyUI tools registradas en main.py
+
+==================================================
+  Resultado: 25/26 tests pasaron
+  ❌ Fallaron: ['Workflow Builder']
+==================================================

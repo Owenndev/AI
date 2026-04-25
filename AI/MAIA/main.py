@@ -1,0 +1,150 @@
+"""
+MAIA Agent OS — Entry Point
+Arranca el servidor FastAPI, registra tools y valida el entorno.
+"""
+
+import asyncio
+from contextlib import asynccontextmanager
+from pathlib import Path
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+
+from app.config import config
+from app.tools.base import tool_registry
+from app.tools.filesystem import (
+    ListFilesTool,
+    ReadFileTool,
+    WriteFileTool,
+    DeleteFileTool,
+    ShellTool,
+    MemorySearchTool,
+)
+from app.tools.comfyui_tool import GenerateImageTool, ComfyUIStatusTool
+
+
+# ── Registro de tools ─────────────────────────────────────────────────────────
+
+def register_tools():
+    tools = [
+        ListFilesTool(),
+        ReadFileTool(),
+        WriteFileTool(),
+        DeleteFileTool(),
+        ShellTool(),
+        MemorySearchTool(),
+        GenerateImageTool(),
+        ComfyUIStatusTool(),
+    ]
+    for tool in tools:
+        tool_registry.register(tool)
+    print(f"✅ Tools registradas ({len(tools)}): {tool_registry.all_names()}")
+
+
+# ── Lifespan ──────────────────────────────────────────────────────────────────
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("\n" + "=" * 50)
+    print("  MAIA Agent OS — Iniciando...")
+    print("=" * 50)
+
+    config.ensure_dirs()
+    print("📁 Directorios verificados")
+
+    register_tools()
+
+    from app.core.memory.sqlite_memory import memory
+    stats = memory.stats()
+    print(f"🧠 Memoria: {stats}")
+
+    async def scan_comfyui():
+        try:
+            from app.core.comfyui.inventory_scanner import comfyui_inventory
+            inv = await comfyui_inventory.get()
+            caps = inv.get("capabilities", {})
+            active = [k for k, v in caps.items() if v]
+            if inv.get("error"):
+                print(f"⚠️  ComfyUI: {inv['error']}")
+            else:
+                print(f"🎨 ComfyUI: {inv['nodes']['total']} nodos | caps: {active}")
+        except Exception as e:
+            print(f"⚠️  ComfyUI no disponible al inicio ({e})")
+
+    asyncio.create_task(scan_comfyui())
+
+    print(f"\n🚀 MAIA lista en http://{config.MAIA_HOST}:{config.MAIA_PORT}")
+    print(f"📖 Docs:    http://{config.MAIA_HOST}:{config.MAIA_PORT}/docs")
+    print(f"🖼️  Outputs: http://{config.MAIA_HOST}:{config.MAIA_PORT}/outputs/")
+    print("=" * 50 + "\n")
+
+    yield
+
+    from app.core.agent_kernel import agent
+    from app.core.comfyui.client import comfyui_client
+    from app.core.comfyui.inventory_scanner import comfyui_inventory
+    await agent.close()
+    await comfyui_client.close()
+    await comfyui_inventory.close()
+    print("\n🛑 MAIA detenida correctamente.")
+
+
+# ── App ───────────────────────────────────────────────────────────────────────
+
+app = FastAPI(
+    title="MAIA Agent OS",
+    description="Agente de IA local con memoria persistente, tools reales y aprendizaje continuo.",
+    version="2.0.0",
+    lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:1420",
+        "tauri://localhost",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:1420",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+outputs_dir = Path(config.OUTPUTS_DIR)
+outputs_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/outputs", StaticFiles(directory=str(outputs_dir)), name="outputs")
+
+from app.routes.chat import router as chat_router
+from app.routes.comfyui import router as comfyui_router
+app.include_router(chat_router)
+app.include_router(comfyui_router)
+
+
+@app.get("/")
+async def root():
+    return {
+        "name": "MAIA Agent OS",
+        "version": "2.0.0",
+        "status": "running",
+        "endpoints": {
+            "docs":    "/docs",
+            "chat":    "/api/chat",
+            "health":  "/api/health",
+            "comfyui": "/api/comfyui/status",
+            "outputs": "/outputs/",
+        },
+    }
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "main:app",
+        host=config.MAIA_HOST,
+        port=config.MAIA_PORT,
+        reload=config.DEBUG,
+        log_level="info",
+    )

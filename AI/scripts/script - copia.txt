@@ -1,0 +1,1 @@
+cd /home/claude/MAIA && pip install fastapi uvicorn httpx aiofiles aiosqlite pydantic python-dotenv openai websockets --break-system-packages --quiet 2>&1 | tail -3

@@ -1,0 +1,35 @@
+# MAIA Agent OS — Dependencias
+# Instalar con: pip install -r requirements.txt
+
+# ── API Framework ─────────────────────────────────────────────
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+python-multipart==0.0.9
+
+# ── HTTP Client ───────────────────────────────────────────────
+httpx[http2]==0.27.0
+
+# ── Base de datos ─────────────────────────────────────────────
+aiosqlite==0.20.0
+
+# ── Validación ────────────────────────────────────────────────
+pydantic==2.8.0
+pydantic-settings==2.4.0
+
+# ── Archivos async ────────────────────────────────────────────
+aiofiles==23.2.1
+
+# ── Variables de entorno ──────────────────────────────────────
+python-dotenv==1.0.1
+
+# ── Browser (Playwright) ─────────────────────────────────────
+playwright==1.47.0
+
+# ── LLM cliente (compatible OpenAI API) ──────────────────────
+openai==1.45.0
+
+# ── WebSockets (para ComfyUI) ─────────────────────────────────
+websockets==13.0
+
+# ── Embeddings locales (Fase 2 — memoria semántica) ──────────
+# sentence-transformers==3.0.1   # descomenta cuando llegues a Fase 2
